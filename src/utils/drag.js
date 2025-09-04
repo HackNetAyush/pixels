@@ -13,7 +13,7 @@
   };
 
   const getPoint = (e) => {
-    if (e.touches && e.touches) return { x: e.touches.clientX, y: e.touches.clientY };
+    if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
     return { x: e.clientX, y: e.clientY };
   };
 
