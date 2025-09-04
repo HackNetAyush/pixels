@@ -14,13 +14,15 @@ export default function SidebarRight() {
   const { selectedObject, updateObject } = useCanvas();
 
   return (
-    <aside className="bg-white border-l shadow-sm h-full w-72 flex flex-col select-none">
+    <aside className="bg-white border-l shadow-sm h-full w-72 min-w-56 flex flex-col select-none md:w-72 md:min-w-56 sm:w-full sm:min-w-0">
       <nav className="flex items-center border-b px-3 py-2 gap-2 flex-wrap">
         {tabs.map(tab => (
           <button
             key={tab.name}
             className={`flex items-center gap-2 px-3 py-1 rounded transition text-gray-700 hover:bg-gray-100 ${activeTab === tab.name ? 'bg-gray-100 font-bold' : ''}`}
             onClick={() => setActiveTab(tab.name)}
+            onTouchStart={e => { e.preventDefault(); setActiveTab(tab.name); }}
+            style={{ touchAction: 'manipulation' }}
           >
             {tab.icon}
             <span>{tab.name}</span>
@@ -39,16 +41,24 @@ export default function SidebarRight() {
                     <textarea
                       value={selectedObject.props.text}
                       onChange={(e)=>updateObject(selectedObject.id,{ props:{ text: e.target.value }})}
+                      onTouchStart={e => e.stopPropagation()}
                       className="w-full border rounded px-2 py-1 h-20 resize-none"
+                      style={{ touchAction: 'manipulation' }}
                     />
                     <label className="block text-xs text-gray-500">Font Size</label>
                     <input type="number" value={selectedObject.props.fontSize}
                       onChange={(e)=>updateObject(selectedObject.id,{ props:{ fontSize: parseInt(e.target.value)||0 }})}
-                      className="w-full border rounded px-2 py-1"/>
+                      onTouchStart={e => e.stopPropagation()}
+                      className="w-full border rounded px-2 py-1"
+                      style={{ touchAction: 'manipulation' }}
+                    />
                     <label className="block text-xs text-gray-500">Color</label>
                     <input type="color" value={selectedObject.props.color}
                       onChange={(e)=>updateObject(selectedObject.id,{ props:{ color: e.target.value }})}
-                      className="w-10 h-10 border rounded"/>
+                      onTouchStart={e => e.stopPropagation()}
+                      className="w-10 h-10 border rounded"
+                      style={{ touchAction: 'manipulation' }}
+                    />
                   </div>
                 )}
                 {selectedObject.type === 'rect' && (

@@ -33,12 +33,16 @@ export const Canvas = () => {
   }, [objects, updateObject]);
 
   return (
-    <div className="relative flex items-center justify-center w-full h-full overflow-auto bg-slate-200/60" onClick={(e)=>{ if(e.target.id==='design-canvas') selectObject(null); }}>
+    <div
+      className="relative flex items-center justify-center w-full h-full overflow-auto bg-slate-200/60"
+      onClick={(e)=>{ if(e.target.id==='design-canvas') selectObject(null); }}
+      style={{ touchAction: 'auto' }}
+    >
       <div
-  id="design-canvas"
-  data-zoom={zoom}
-  className="canvas overflow-hidden relative bg-white shadow-md outline outline-gray-300"
-  style={{ width: canvas.width, height: canvas.height, transform: `scale(${zoom})`, transformOrigin: 'top left' }}
+        id="design-canvas"
+        data-zoom={zoom}
+        className="canvas overflow-hidden relative bg-white shadow-md outline outline-gray-300"
+        style={{ width: canvas.width, height: canvas.height, transform: `scale(${zoom})`, transformOrigin: 'top left', touchAction: 'auto' }}
       >
         {objects.map(o => {
           if (o.type === 'image') {
@@ -72,6 +76,19 @@ export const Canvas = () => {
                 fontFamily={o.props.fontFamily}
                 selected={selectedId === o.id}
                 onSelect={()=>selectObject(o.id)}
+                onTextChange={(id, newText, newProps) => {
+                  if (newProps) {
+                    updateObject(id, { 
+                      props: { 
+                        text: newText,
+                        fontSize: newProps.fontSize,
+                        color: newProps.color
+                      } 
+                    });
+                  } else {
+                    updateObject(id, { props: { text: newText } });
+                  }
+                }}
                 hidden={o.visible===false}
               />
             );
@@ -85,6 +102,8 @@ export const Canvas = () => {
                 data-resizable
                 data-bounds="#canvas-window"
                 onClick={(e)=>{ e.stopPropagation(); selectObject(o.id); }}
+                onTouchStart={(e)=>{ e.stopPropagation(); selectObject(o.id); }}
+                onPointerDown={(e)=>{ if (e.pointerType === 'touch' || e.pointerType === 'pen' || e.pointerType === 'mouse') { e.stopPropagation(); selectObject(o.id); } }}
                 style={{ transform: `translate(${o.x}px, ${o.y}px)`, width: o.width, height: o.height, background: o.props.fill, display: o.visible===false ? 'none':'block' }}
                 className={`absolute ${selectedId===o.id? 'outline outline-blue-400' : 'hover:outline hover:outline-blue-300'}`}
               />
